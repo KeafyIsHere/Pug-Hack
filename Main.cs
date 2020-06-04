@@ -1,7 +1,10 @@
 ﻿using Harmony;
+using Pug_Hack.RubyButtonAPI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using VRC.SDKBase;
 
 namespace Pug_Hack
 {
@@ -45,17 +48,18 @@ namespace Pug_Hack
         Dictionary<string, Vector3> gobjmove = new Dictionary<string, Vector3>()
         {
             {
-                "/ - Logic Objects/GameObject/utility-security/RemoveBabs - night view",  Vector3.positiveInfinity
+                "/ - Logic Objects/GameObject/utility-security/RemoveBabs - night view",  new Vector3(-100,-100,100)
             },
             {
-                "/ - Logic Objects/GameObject/bar-security/RemoveBabs - main bar",  Vector3.positiveInfinity
+                "/ - Logic Objects/GameObject/bar-security/RemoveBabs - main bar",  new Vector3(-100,-100,100)
             },
             {
-                "/ - Logic Objects/GameObject/bar-security/bar - main - lock-down-barrior" , Vector3.positiveInfinity
+                "/ - Logic Objects/GameObject/bar-security/bar - main - lock-down-barrior" , new Vector3(-100,-100,100)
             },
             {
-                "/ - Logic Objects/GameObject/bar-security/bar - Two - lock-down-barrior", Vector3.positiveInfinity
+                "/ - Logic Objects/GameObject/bar-security/bar - Two - lock-down-barrior", new Vector3(-100,-100,100)
             },
+            //WHY WON'T YOU WORK AHHHHHH
             //{
             //    "/great_pug_floor2/stage-locked_barrior", new Vector3(1000,1000,1000)
             //},
@@ -83,7 +87,46 @@ namespace Pug_Hack
             "/great_pug/kitchen-walls",
             "/Cube"
         };
+        private QMNestedButton PugStuff;
+        public override void VRChat_OnUiManagerInit()
+        {
+            PugStuff = new QMNestedButton("ShortcutMenu", 5, 2, "Pug Hack", "Cool shit you can do in the pug", Color.cyan, Color.white, Color.cyan, Color.yellow);
+            new QMToggleButton(PugStuff, 1, 0, "Turn On Audio Source", () =>
+            {
+                GameObject.Find("/ - Logic Objects/GameObject/GameObject-01/button-on_028").GetComponent<VRC_Trigger>().Interact();
+            }, "Turn Off Audio Source", () =>
+            {
+                GameObject.Find("/ - Logic Objects/GameObject/GameObject-01/button-off_028").GetComponent<VRC_Trigger>().Interact();
+            }, "Toggle Jaz Music");
 
+            new QMToggleButton(PugStuff, 2, 0, "Lock Stage", () =>
+            {
+                GameObject.Find("/ - Logic Objects/GameObject/GameObject-01/button-on_022").GetComponent<VRC_Trigger>().Interact();
+            }, "Unlock Stage", () =>
+            {
+                GameObject.Find("/ - Logic Objects/GameObject/GameObject-01/button-off_022").GetComponent<VRC_Trigger>().Interact();
+            }, "Toggle Stage Nigga Blocker");
+
+            new QMToggleButton(PugStuff, 3, 0, "Lock First Floor", () =>
+            {
+                GameObject.Find("/ - Logic Objects/GameObject/GameObject-01/button-on_029").GetComponent<VRC_Trigger>().Interact();
+            }, "Unlock First Floor", () =>
+            {
+                GameObject.Find("/ - Logic Objects/GameObject/GameObject-01/button-off_029").GetComponent<VRC_Trigger>().Interact();
+            }, "Toggle First Floor Nigga Blocker");
+
+            new QMSingleButton(PugStuff, 4, 0, "Eject Ground Floor Bar", () =>
+            {
+                GameObject.Find("/ - Logic Objects/GameObject/bar-security/button - bar eject - main").GetComponent<VRC_Trigger>().Interact();
+            }, "Eject Niggas from ground Floor Bar");
+
+            new QMSingleButton(PugStuff, 1, 1, "Eject 1st Floor Bar", () =>
+            {
+                GameObject.Find("/ - Logic Objects/GameObject/bar-security/button - bar eject - night view").GetComponent<VRC_Trigger>().Interact();
+            }, "Eject Niggas from 1st Floor Bar");
+
+
+        }
         public override void OnLevelWasLoaded(int level)
         {
             if (string.IsNullOrEmpty(GameObject.FindObjectOfType<ApiWorldUpdate>().field_Private_String_0)) return;
@@ -103,11 +146,14 @@ namespace Pug_Hack
                     foreach (Collider col in GameObject.Find(line).GetComponents<Collider>())
                         col.enabled = false;
 
-
                 //temp fix for foreach gameobject move failing to find this gameobject
                 foreach (GameObject all in Resources.FindObjectsOfTypeAll<GameObject>())
                     if (all.name == "stage-locked_barrior")
-                        all.transform.localPosition = Vector3.positiveInfinity;
+                        all.transform.localPosition = new Vector3(-100, -100, 100);
+                //PugStuff.menu.gameObject.SetActive(true);
+
+                
+
             }
         }
     }
